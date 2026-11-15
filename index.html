@@ -421,7 +421,25 @@ function draw(){
  if(!running&&round===0&&!ended){ctx.fillStyle="#243820";ctx.font="bold 18px Arial";ctx.fillText("DEFEND THE SACRED SUN CRYSTAL",26,48);}
 }
 function loop(ts){let dt=Math.min(.04,(ts-lastTime)/1000||0);lastTime=ts;update(dt);draw();requestAnimationFrame(loop);}
-unlockTowersByLevel();buildTowerGrid();initDecor();renderProfile();renderMapGrid();setDifficulty(difficulty);updateUI();requestAnimationFrame(loop);
+unlockTowersByLevel();
+buildTowerGrid();
+initDecor();
+renderProfile();
+renderMapGrid();
+setDifficulty(difficulty);
+updateUI();
+
+const introScreen = document.getElementById("introScreen");
+const playButton = document.getElementById("playButton");
+
+setTimeout(() => {
+  playButton.style.display = "inline-block";
+}, 2000);
+
+playButton.addEventListener("click", () => {
+  introScreen.style.display = "none";
+  requestAnimationFrame(loop);
+});
 </script>
 </body>
 </html>
