@@ -108,7 +108,48 @@ canvas{width:100%;height:100%;display:block;cursor:crosshair;touch-action:manipu
 </style>
 </head>
 <body>
-<header class="topbar">
+
+<div id="introScreen" style="
+position:fixed;
+inset:0;
+z-index:9999;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle at center,#20382b,#07100c);
+color:#f4ce78;
+text-align:center;
+font-family:Inter,Segoe UI,Arial,sans-serif;
+">
+  <h1 style="margin:0;font-size:clamp(40px,7vw,90px);">
+    GUARDIANS OF THE GROVE
+  </h1>
+
+  <div style="
+  margin-top:20px;
+  font-size:clamp(24px,4vw,42px);
+  color:#9be0a4;
+  font-weight:900;">
+    FOR NARNIA!!
+  </div>
+
+  <button id="playButton" style="
+  margin-top:40px;
+  display:none;
+  padding:16px 32px;
+  font-size:20px;
+  font-weight:900;
+  border-radius:12px;
+  border:1px solid #f4ce78;
+  background:#9b773b;
+  color:white;
+  cursor:pointer;">
+    PLAY GAME
+  </button>
+</div>
+
+ <header class="topbar">
  <div class="brand">GUARDIANS <span>OF THE GROVE</span><small class="version">V1.0 · THE GROVE CAMPAIGN</small></div>
  <div class="hud">
   <div class="hud-item">☀ SUN DROPLETS<b id="money">650</b></div>
