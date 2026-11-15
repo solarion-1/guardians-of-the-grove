@@ -1,444 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101b17">
-<title>Guardians of the Grove — V1.0</title>
-<style>
-:root{--bg:#0b1512;--panel:#14231d;--panel2:#1c3026;--line:#365342;--gold:#f4ce78;--green:#9be0a4;--text:#eff6e9;--muted:#a8b9aa;--red:#e77d70}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
-body{overflow:hidden;background:radial-gradient(ellipse at 25% 0%,#20382b 0,#0b1512 58%)}
-button{font:inherit;color:inherit}
-.topbar{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #354e3e;background:rgba(12,25,19,.96);gap:14px;position:relative;z-index:2}
-.brand{font-weight:950;letter-spacing:1.6px;font-size:18px;white-space:nowrap;text-shadow:0 2px 12px #0008}
-.brand span{color:var(--gold)}
-.version{font-size:10px;color:#a8c4a8;letter-spacing:1px;margin-left:7px}
-.hud{display:flex;align-items:center;gap:9px}
-.hud-item{background:#1a2d23;border:1px solid #385441;border-radius:9px;padding:7px 12px;min-width:84px;font-size:11px;color:var(--muted);text-align:center}
-.hud-item b{display:block;color:var(--gold);font-size:16px;margin-top:2px;font-variant-numeric:tabular-nums}
-.hud-item.life b{color:#ff9e91}
-.layout{height:calc(100dvh - 62px);display:grid;grid-template-columns:minmax(0,1fr) 370px;min-height:0}
-.stage{position:relative;min-width:0;min-height:0;overflow:hidden;background:#496f43}
-canvas{width:100%;height:100%;display:block;cursor:crosshair;touch-action:manipulation}
-.sidebar{background:linear-gradient(180deg,#14231d,#101d17);border-left:1px solid #34503e;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
-.panel{background:linear-gradient(145deg,#1b3025,#14241c);border:1px solid #365441;border-radius:12px;padding:11px;box-shadow:0 8px 22px #0002}
-.panel-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 9px;font-size:13px;letter-spacing:.4px}
-.panel-title span{color:var(--gold);font-size:10px;font-weight:700}
-.help{color:var(--muted);font-size:10px;line-height:1.45;margin:0 0 9px}
-.tower-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.tower-pick{display:flex;align-items:center;gap:7px;text-align:left;padding:8px 7px;background:#21382a;border:1px solid #426149;border-radius:8px;min-width:0;cursor:pointer;transition:.15s}
-.tower-pick:hover{background:#2b4934;transform:translateY(-1px)}
-.tower-pick.active{border-color:var(--gold);box-shadow:0 0 0 1px #f4ce7855,inset 0 0 16px #f4ce7812;background:#3c4a2e}
-.tower-icon{width:28px;height:28px;display:grid;place-items:center;flex:0 0 28px;border-radius:8px;background:#ffffff12;font-size:17px}
-.tower-label{min-width:0;flex:1}
-.tower-label strong{font-size:10px;display:block;line-height:1.2}
-.tower-label small{display:block;color:#eacb82;font-size:9px;margin-top:3px}
-.controls{display:grid;grid-template-columns:1.5fr 1fr;gap:6px}
-.btn{border:1px solid #557456;background:linear-gradient(#36583d,#27432f);border-radius:8px;padding:9px 10px;font-size:10px;font-weight:800;cursor:pointer;transition:.15s}
-.btn:hover:not(:disabled){filter:brightness(1.16);transform:translateY(-1px)}
-.btn:disabled{opacity:.35;cursor:not-allowed}
-.btn.primary{background:linear-gradient(#9b773b,#72552a);border-color:#d5b66a}
-.btn.sell{background:linear-gradient(#713d35,#512c29);border-color:#9d5c50}
-.statusline{font-size:10px;color:var(--muted);line-height:1.4;margin:8px 1px 0;min-height:14px}
-.selected-empty{font-size:10px;color:var(--muted);line-height:1.45;margin:0}
-.tower-detail{display:flex;align-items:center;gap:9px;margin-bottom:8px}
-.detail-icon{width:38px;height:38px;border-radius:10px;background:#ffffff12;display:grid;place-items:center;font-size:22px;border:1px solid #ffffff18}
-.detail-name{font-size:12px;font-weight:900}
-.detail-sub{font-size:9px;color:var(--muted);margin-top:3px}
-.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:7px 0}
-.stat{background:#0e1d16;border:1px solid #2e4837;border-radius:7px;padding:6px;text-align:center}
-.stat small{display:block;color:var(--muted);font-size:8px}
-.stat b{display:block;color:#f5d68d;font-size:12px;margin-top:3px}
-.crosspath{font-size:9px;color:#c9d8c8;background:#0e1b15;padding:6px 8px;border-radius:6px;margin:6px 0}
-.path{border:1px solid #3a5944;background:#172a20;border-radius:9px;padding:7px;margin-top:7px}
-.path-head{display:flex;justify-content:space-between;font-size:10px;font-weight:900;margin-bottom:6px}
-.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.tier{padding:6px 1px 5px;border-radius:6px;border:1px solid #405b48;background:#263d2d;font-size:11px;font-weight:900;cursor:pointer}
-.tier small{display:block;font-size:7px;font-weight:600;color:#c5d0c2;margin-top:3px}
-.tier.owned{background:linear-gradient(#9c7739,#70542b);border-color:#e5c36c;color:#fff4d1}
-.tier.next{border-color:#a5dca0;box-shadow:inset 0 0 0 1px #a5dca044}
-.tier:disabled{opacity:.32;cursor:not-allowed}
-.path-desc{font-size:9px;color:#aebfaf;margin:6px 1px 0;min-height:13px}
-.rules{font-size:9px;line-height:1.5;color:var(--muted);margin:0}
-.rules b{color:#e8d094}
-.overlay-message{position:absolute;top:13px;left:50%;transform:translateX(-50%);padding:9px 15px;background:#102019ed;border:1px solid #d7b56c;border-radius:10px;color:#fff1c7;font-size:11px;font-weight:800;box-shadow:0 8px 24px #0005;pointer-events:none;opacity:0;transition:opacity .18s;z-index:1;white-space:nowrap}
-.overlay-message.show{opacity:1}
-.game-end{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#06100edb;backdrop-filter:blur(5px);z-index:3;padding:18px}
-.modal{max-width:390px;width:100%;padding:26px;border-radius:18px;background:linear-gradient(145deg,#263d2d,#14251c);border:1px solid #c7a85e;text-align:center;box-shadow:0 20px 80px #0009}
-.modal .sigil{font-size:42px}
-.modal h1{font-size:24px;color:var(--gold);margin:8px 0}
-.modal p{font-size:12px;line-height:1.55;color:#c5d2c4}
-.mobile-hint{display:none}
-
-.menu-screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,#31543b,#07100c 72%);overflow:auto}
-.menu-card{width:min(1080px,100%);max-height:94vh;overflow:auto;background:linear-gradient(145deg,#1d3527,#101d16);border:1px solid #a98d51;border-radius:20px;padding:22px;box-shadow:0 25px 90px #000b}
-.menu-head{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
-.menu-title{font-size:clamp(24px,4vw,38px);font-weight:1000;letter-spacing:1px;color:#f4d58d}
-.menu-sub{color:#bdcdbb;font-size:12px;margin-top:5px}
-.profile{display:flex;gap:12px;align-items:center;background:#0d1b13;border:1px solid #3d5b43;padding:10px 14px;border-radius:12px;min-width:230px}
-.level-orb{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#e3c477,#98713a);font-size:20px;font-weight:1000;color:#1c2116}
-.profile-main{flex:1}.profile-main b{font-size:13px}.xp-track{height:8px;background:#263b2c;border-radius:8px;overflow:hidden;margin-top:7px}.xp-fill{height:100%;background:linear-gradient(90deg,#7ecb82,#d9e98a);width:0}
-.menu-section{margin-top:20px}.menu-section h2{font-size:14px;color:#f2d28a;margin:0 0 10px}
-.map-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.map-card{background:#17291e;border:1px solid #405b43;border-radius:12px;padding:12px;text-align:left;cursor:pointer;min-height:112px;transition:.15s}
-.map-card:hover:not(:disabled){transform:translateY(-2px);border-color:#e6c675;background:#243b29}
-.map-card.chosen{border-color:#f4ce78;box-shadow:0 0 0 1px #f4ce7855;background:#34442b}
-.map-card:disabled{opacity:.42;cursor:not-allowed}
-.map-num{font-size:10px;color:#d8bd7b;font-weight:900;letter-spacing:1px}
-.map-name{font-size:14px;font-weight:900;margin:5px 0}
-.map-desc{font-size:10px;color:#b7c7b5;line-height:1.4}
-.map-lock{font-size:9px;color:#e49b87;margin-top:7px}
-.menu-bottom{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
-.difficulty{display:flex;gap:6px;flex-wrap:wrap}.diff-btn{padding:9px 13px;border-radius:8px;border:1px solid #4c674d;background:#17291e;font-weight:800;font-size:10px;cursor:pointer}.diff-btn.active{background:#725b30;border-color:#e5c36c}
-.menu-actions{display:flex;gap:7px;flex-wrap:wrap}.menu-actions .btn{font-size:11px;padding:11px 16px}
-.profile-tools{display:flex;gap:6px;margin-top:8px}.profile-tools button{font-size:9px;padding:5px 8px}
-.tower-preview{display:flex;gap:10px;align-items:flex-start;padding:10px;background:#0e1d16;border:1px solid #385541;border-radius:9px;margin-top:9px;min-height:78px}
-.preview-symbol{font-size:28px;width:38px;text-align:center}.preview-copy{min-width:0}.preview-copy strong{font-size:11px}.preview-copy p{font-size:9px;line-height:1.45;color:#b9c9b7;margin:4px 0}.preview-meta{font-size:9px;color:#e8ce8d}
-.xp-hud{position:absolute;left:12px;bottom:12px;background:#102019eF;border:1px solid #9e8852;border-radius:9px;padding:7px 10px;z-index:1;font-size:10px;pointer-events:none}
-.xp-hud b{color:#f4d58d}.topbar .version{font-size:10px}
-@media(max-width:700px){.map-grid{grid-template-columns:1fr 1fr}.menu-card{padding:15px}.profile{min-width:0;width:100%}.menu-screen{padding:8px}}
-
-@media(max-width:900px){.layout{grid-template-columns:minmax(0,1fr) 320px}.sidebar{padding:9px}.topbar{padding:0 12px}}
-@media(max-width:680px){
- body{overflow:auto}.topbar{height:auto;min-height:58px;padding:7px 9px;align-items:flex-start;flex-direction:column;gap:6px}.brand{font-size:14px}.hud{width:100%;gap:5px}.hud-item{flex:1;padding:5px 3px;min-width:0;font-size:9px}.hud-item b{font-size:13px}
- .layout{height:auto;min-height:calc(100dvh - 88px);display:flex;flex-direction:column}.stage{height:54vh;min-height:300px;max-height:560px}.sidebar{overflow:visible;border-left:0;border-top:1px solid #34503e}.tower-grid{grid-template-columns:repeat(3,1fr)}.tower-pick{padding:6px 4px}.tower-icon{width:24px;height:24px;flex-basis:24px;font-size:14px}.tower-label strong{font-size:9px}.mobile-hint{display:block}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <meta name="description" content="Solarion — a home for creative projects, games, and software.">
+  <title>Solarion — Official Homepage</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080d18;
+      --panel: rgba(17, 27, 47, .72);
+      --line: rgba(153, 184, 230, .15);
+      --text: #edf4ff;
+      --muted: #9aaac3;
+      --cyan: #69e3ef;
+      --violet: #9b8cff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 15% 5%, rgba(52, 111, 177, .22), transparent 34rem),
+        radial-gradient(ellipse at 88% 25%, rgba(112, 75, 190, .18), transparent 31rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
+    header {
+      height: 78px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: .12em; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
+      color: #07121b; font-weight: 900; background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 0 25px rgba(105, 227, 239, .22);
+    }
+    nav { display: flex; gap: 27px; color: var(--muted); font-size: .92rem; }
+    nav a:hover, .text-link:hover { color: var(--cyan); }
+    .hero { padding: 105px 0 90px; max-width: 850px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px;
+      border: 1px solid rgba(105, 227, 239, .25); border-radius: 999px;
+      color: var(--cyan); background: rgba(105, 227, 239, .06);
+      font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+    h1 { margin: 25px 0 17px; font-size: clamp(3.2rem, 8vw, 6.4rem); line-height: .98; letter-spacing: -.065em; }
+    h1 span {
+      background: linear-gradient(100deg, #f4f8ff 10%, var(--cyan) 55%, #aa9cff 95%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .intro { max-width: 650px; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.22rem); }
+    .actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 31px; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 12px 18px; border-radius: 12px; font-weight: 750; font-size: .94rem;
+      border: 1px solid var(--line); transition: transform .18s, border-color .18s, background .18s;
+    }
+    .button:hover { transform: translateY(-2px); border-color: rgba(105, 227, 239, .45); }
+    .button.primary { color: #07121b; border: 0; background: linear-gradient(105deg, var(--cyan), #a6a0ff); }
+    section { padding: 38px 0 78px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 22px; }
+    .section-heading h2 { margin: 0; font-size: 1.7rem; letter-spacing: -.035em; }
+    .section-heading p { margin: 5px 0 0; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .project {
+      position: relative; overflow: hidden; min-height: 245px; padding: 27px;
+      border: 1px solid var(--line); border-radius: 20px; background: var(--panel);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, .16);
+    }
+    .project::after {
+      content: ""; position: absolute; width: 210px; height: 210px; right: -90px; top: -105px;
+      border-radius: 50%; background: var(--glow, rgba(105, 227, 239, .12)); filter: blur(4px); pointer-events: none;
+    }
+    .project.browser { --glow: rgba(155, 140, 255, .17); }
+    .project-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .project-icon {
+      width: 43px; height: 43px; display: grid; place-items: center; border-radius: 13px;
+      color: var(--cyan); background: rgba(105, 227, 239, .1); font-size: 1.25rem;
+    }
+    .browser .project-icon { color: #b5aaff; background: rgba(155, 140, 255, .12); }
+    .status { color: var(--muted); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+    .project h3 { margin: 21px 0 8px; font-size: 1.35rem; letter-spacing: -.025em; }
+    .project p { min-height: 52px; margin: 0 0 19px; color: var(--muted); font-size: .94rem; }
+    .text-link { color: var(--cyan); font-size: .9rem; font-weight: 750; }
+    .browser .text-link { color: #b5aaff; }
+    .about {
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center;
+      padding: 30px; border: 1px solid var(--line); border-radius: 20px;
+      background: linear-gradient(120deg, rgba(17, 27, 47, .8), rgba(17, 27, 47, .35));
+    }
+    .about h2 { margin: 0 0 10px; font-size: 1.6rem; }
+    .about p { margin: 0; color: var(--muted); }
+    .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .principle { padding: 14px; border: 1px solid var(--line); border-radius: 13px; color: #dbe7fa; font-size: .88rem; }
+    .principle strong { display: block; margin-bottom: 3px; color: var(--cyan); }
+    footer { border-top: 1px solid var(--line); padding: 25px 0 35px; color: var(--muted); font-size: .85rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
+    @media (max-width: 700px) {
+      header { height: auto; min-height: 72px; align-items: flex-start; padding: 18px 0; gap: 18px; flex-direction: column; }
+      nav { gap: 18px; flex-wrap: wrap; }
+      .hero { padding: 75px 0 65px; }
+      .grid, .about { grid-template-columns: 1fr; }
+      .about { gap: 24px; padding: 23px; }
+      .project p { min-height: 0; }
+    }
+  </style>
 </head>
 <body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="#" aria-label="Solarion home">
+        <span class="brand-mark">S</span><span>SOLARION</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="https://github.com/solarion-1" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </nav>
+    </header>
 
-<div id="introScreen" style="
-position:fixed;
-inset:0;
-z-index:9999;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-background:radial-gradient(circle at center,#20382b,#07100c);
-color:#f4ce78;
-text-align:center;
-font-family:Inter,Segoe UI,Arial,sans-serif;
-">
-  <h1 style="margin:0;font-size:clamp(40px,7vw,90px);">
-    GUARDIANS OF THE GROVE
-  </h1>
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Independent projects · Built with curiosity</div>
+        <h1>Ideas become<br><span>something real.</span></h1>
+        <p class="intro">Welcome to Solarion. Explore original games, software experiments, and projects built one step at a time.</p>
+        <div class="actions">
+          <a class="button primary" href="#projects">Explore projects <span aria-hidden="true">↓</span></a>
+          <a class="button" href="https://github.com/solarion-1" target="_blank" rel="noopener noreferrer">View GitHub ↗</a>
+        </div>
+      </section>
 
-  <div style="
-  margin-top:20px;
-  font-size:clamp(24px,4vw,42px);
-  color:#9be0a4;
-  font-weight:900;">
-    FOR NARNIA!!
+      <section id="projects">
+        <div class="section-heading">
+          <div>
+            <h2>Featured projects</h2>
+            <p>A look at what’s being built.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="project">
+            <div class="project-top">
+              <div class="project-icon" aria-hidden="true">✦</div>
+              <span class="status">Game project</span>
+            </div>
+            <h3>Guardians of the Grove</h3>
+            <p>Defend the Sacred Sun Crystal in an original nature-meets-machinery tower defense game.</p>
+            <a class="text-link" href="https://solarion-1.github.io/guardians-of-the-grove/">View game repository ↗</a>
+          </article>
+
+          <article class="project browser">
+            <div class="project-top">
+              <div class="project-icon" aria-hidden="true">◈</div>
+              <span class="status">Software project</span>
+            </div>
+            <h3>Solarion Browser</h3>
+            <p>A desktop browser project focused on a clean experience, useful features, and efficient performance.</p>
+            <a class="text-link" href="https://github.com/solarion-1/solarion-browser">View browser repository ↗</a>
+          </article>
+        </div>
+      </section>
+
+      <section id="about">
+        <div class="about">
+          <div>
+            <h2>Built through experimentation.</h2>
+            <p>Solarion is a space for creating, testing, improving, and sharing projects. More experiments and releases will appear here as they grow.</p>
+          </div>
+          <div class="principles">
+            <div class="principle"><strong>Build</strong>Turn ideas into working projects.</div>
+            <div class="principle"><strong>Improve</strong>Make each version better.</div>
+            <div class="principle"><strong>Explore</strong>Try new tools and approaches.</div>
+            <div class="principle"><strong>Share</strong>Put finished work out into the world.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <span>© <span id="year"></span> Solarion</span>
+        <span>Made with curiosity.</span>
+      </div>
+    </footer>
   </div>
-
-  <button id="playButton" style="
-  margin-top:40px;
-  display:none;
-  padding:16px 32px;
-  font-size:20px;
-  font-weight:900;
-  border-radius:12px;
-  border:1px solid #f4ce78;
-  background:#9b773b;
-  color:white;
-  cursor:pointer;">
-    PLAY GAME
-  </button>
-</div>
-
- <header class="topbar">
- <div class="brand">GUARDIANS <span>OF THE GROVE</span><small class="version">V1.0 · THE GROVE CAMPAIGN</small></div>
- <div class="hud">
-  <div class="hud-item">☀ SUN DROPLETS<b id="money">650</b></div>
-  <div class="hud-item life">❤ CRYSTAL<b id="lives">100</b></div>
-  <div class="hud-item">ROUND<b id="round">0 / 30</b></div>
- </div>
-</header>
-
-<div class="menu-screen" id="campaignMenu">
- <div class="menu-card">
-  <div class="menu-head">
-   <div><div class="menu-title">🌳 GUARDIANS OF THE GROVE</div><div class="menu-sub">V1.0 · THE GROVE CAMPAIGN — Restore the nine sacred groves.</div></div>
-   <div class="profile"><div class="level-orb" id="profileLevel">1</div><div class="profile-main"><b id="profileTitle">Grove Initiate</b><div class="menu-sub" id="profileXpText">0 / 100 XP</div><div class="xp-track"><div class="xp-fill" id="profileXpBar"></div></div><div class="profile-tools"><button class="btn" onclick="exportSave()">BACK UP SAVE</button><button class="btn" onclick="$('importFile').click()">IMPORT SAVE</button><input id="importFile" type="file" accept=".json,application/json" hidden onchange="importSave(event)"></div></div></div>
-  </div>
-  <div class="menu-section"><h2>CAMPAIGN MAP · SELECT A GROVE</h2><div class="map-grid" id="mapGrid"></div></div>
-  <div class="menu-bottom">
-   <div><div class="menu-sub" style="margin-bottom:7px">DIFFICULTY</div><div class="difficulty"><button class="diff-btn active" data-diff="easy" onclick="setDifficulty('easy')">EASY</button><button class="diff-btn" data-diff="normal" onclick="setDifficulty('normal')">NORMAL</button><button class="diff-btn" data-diff="hard" onclick="setDifficulty('hard')">HARD</button></div></div>
-   <div class="menu-actions"><button class="btn" onclick="resetSave()">RESET SAVE</button><button class="btn primary" id="playCampaign" onclick="launchLevel()">ENTER THE GROVE</button></div>
-  </div>
-  <p class="menu-sub" id="menuStatus">Your progress saves automatically in this browser. Export a backup before clearing browser data.</p>
- </div>
-</div>
-
-<main class="layout">
- <section class="stage" id="stage">
-  <canvas id="game" width="1200" height="680" aria-label="Guardians of the Grove game board"></canvas>
-  <div id="message" class="overlay-message"></div><div class="xp-hud">PLAYER <b id="hudLevel">1</b> · <b id="hudXp">0 XP</b></div>
-  <div id="gameEnd" class="game-end"><div class="modal"><div class="sigil">🌳</div><h1 id="endTitle">The Grove Is Saved!</h1><p id="endText"></p><button class="btn primary" onclick="restartGame()">REPLAY LEVEL</button> <button class="btn" onclick="returnToCampaign()">CAMPAIGN MAP</button></div></div>
- </section>
- <aside class="sidebar">
-  <section class="panel">
-   <h2 class="panel-title">Choose a Guardian <span>9 DEFENDERS</span></h2>
-   <p class="help">Choose a guardian, then place it on open grass. Select a placed guardian to inspect its abilities and upgrades.</p>
-   <div class="tower-grid" id="towerGrid"></div><div class="tower-preview" id="towerPreview"><div class="preview-symbol">🌱</div><div class="preview-copy"><strong>Brass Sproutling</strong><p>Hover over or select a guardian to learn its role, strengths and abilities before placing it.</p><div class="preview-meta">STARTING COST · 50 ☀</div></div></div>
-   <p class="statusline" id="placeHint">Select a defender to prepare its placement.</p>
-  </section>
-  <section class="panel">
-   <h2 class="panel-title">Battle Command <span>CAMPAIGN</span></h2>
-   <div class="controls"><button class="btn primary" id="roundButton" onclick="startRound()">START ROUND 1</button><button class="btn" id="speedButton" onclick="toggleSpeed()">SPEED 1×</button></div>
-   <p class="statusline" id="roundStatus">Build your defenses before the first wave.</p><button class="btn" onclick="returnToCampaign()" style="width:100%;margin-top:7px">CAMPAIGN MAP</button>
-  </section>
-  <section class="panel">
-   <h2 class="panel-title">Guardian Details <span id="selectionTag">NO SELECTION</span></h2>
-   <div id="towerInfo"><p class="selected-empty">Select a placed guardian to view its combat statistics, crosspath and upgrade paths.</p></div>
-   <div id="upgradePaths"></div>
-   <p id="upgradeMessage" class="statusline"></p>
-   <button class="btn sell" id="sellButton" onclick="sellSelected()" disabled style="width:100%;margin-top:7px">SELL GUARDIAN · 70%</button>
-  </section>
-  <section class="panel">
-   <h2 class="panel-title">Path Rules <span>UPGRADE GUIDE</span></h2>
-   <p class="rules">Each guardian has <b>three paths</b> with five tiers. Up to two paths may exceed tier 2, and only one path may reach tier 5. Your third path is limited to tier 2.<br><br><b>Allowed:</b> 2-4-5, 3-3-0, 2-3-5, 4-4-0.<br><b>Blocked:</b> 3-3-5, 2-5-5.</p>
-  </section>
-  <p class="help mobile-hint">Tip: On a phone, rotate to landscape for a larger battlefield.</p>
- </aside>
-</main>
-<script>
-"use strict";
-const canvas=document.getElementById("game"),ctx=canvas.getContext("2d");
-const W=1200,H=680,MAX_ROUNDS=30,PATH_WIDTH=84;
-let pathPoints=[{x:-35,y:145},{x:225,y:145},{x:225,y:345},{x:475,y:345},{x:475,y:165},{x:735,y:165},{x:735,y:475},{x:990,y:475},{x:990,y:315},{x:1160,y:315}];
-const mapDefs=[
-{id:1,name:"Sunlit Grove",region:"Ancient woodland",desc:"A winding beginner trail through the heart of the forest.",path:[[-35,145],[225,145],[225,345],[475,345],[475,165],[735,165],[735,475],[990,475],[990,315],[1160,315]],bg:["#83a95f","#668e4d","#527c45"]},
-{id:2,name:"Whispering Woods",region:"Enchanted forest",desc:"A longer twisting route beneath glowing old-growth trees.",path:[[-35,500],[180,500],[180,230],[420,230],[420,470],[680,470],[680,130],[930,130],[930,350],[1160,350]],bg:["#668b64","#426e55","#315744"]},
-{id:3,name:"Shattered Highlands",region:"Rocky highlands",desc:"Open bends and exposed ground leave little room for error.",path:[[-35,100],[330,100],[330,260],[120,260],[120,520],[520,520],[520,300],[850,300],[850,560],[1160,560]],bg:["#a18a62","#82714e","#665a42"]},
-{id:4,name:"Ancient Ruins",region:"Overgrown temples",desc:"A maze-like route around the remains of a forgotten civilization.",path:[[-35,330],[180,330],[180,100],[470,100],[470,550],[700,550],[700,210],[1000,210],[1000,440],[1160,440]],bg:["#8c9560","#687b4d","#4e6541"]},
-{id:5,name:"Moonwell Marsh",region:"Mystic wetlands",desc:"A damp, winding path surrounded by moonlit pools.",path:[[-35,170],[250,170],[250,470],[500,470],[500,250],[760,250],[760,520],[1030,520],[1030,330],[1160,330]],bg:["#668b83","#496e68","#34544e"]},
-{id:6,name:"Emberfall Pass",region:"Volcanic frontier",desc:"A harsh route through scorched earth and dangerous bends.",path:[[-35,520],[250,520],[250,300],[470,300],[470,100],[760,100],[760,390],[990,390],[990,170],[1160,170]],bg:["#a16f53","#80533f","#603e35"]},
-{id:7,name:"Skyroot Canopy",region:"Ancient treetops",desc:"A narrow elevated trail with sharp turns and long sightlines.",path:[[-35,250],[180,250],[180,80],[450,80],[450,390],[690,390],[690,150],[930,150],[930,500],[1160,500]],bg:["#75a06a","#4f8059","#386647"]},
-{id:8,name:"Frostbloom Hollow",region:"Frozen grove",desc:"Icy clearings and sweeping turns challenge your placement.",path:[[-35,420],[220,420],[220,150],[480,150],[480,500],[740,500],[740,220],[990,220],[990,420],[1160,420]],bg:["#a0b8ad","#769a91","#587b78"]},
-{id:9,name:"Heart of the Grove",region:"Sacred crystal sanctuary",desc:"The final defense. Every enemy type and the Grovebreaker Titan await.",path:[[-35,340],[170,340],[170,100],[390,100],[390,540],[650,540],[650,100],[900,100],[900,480],[1160,480]],bg:["#779b60","#52784a","#34583d"]}
-].map(m=>({...m,path:m.path.map(([x,y])=>({x,y}))}));
-const towerTypes=[
-const towerTypes=[
-{id:"sprout",category:"Primary",name:"Brass Sproutling",cost:50,role:"Balanced attacker",unlockLevel:1,strength:"Low cost and flexible placement",weakness:"No extreme specialty",color:"#c58b4c",symbol:"🌱",damage:18,range:165,rate:.82,projectile:450,desc:"A dependable all-round defender."},
-
-{id:"thorn",category:"Primary",name:"Thorncaster Bush",cost:95,role:"Rapid-fire",unlockLevel:2,strength:"Excellent against groups of light enemies",weakness:"Shorter range and modest damage per thorn",color:"#6eaf55",symbol:"🌿",damage:7,range:125,rate:.24,projectile:510,desc:"Unleashes quick volleys of sharp thorns."},
-
-{id:"prism",category:"Magic",name:"Solar Lens Prism",cost:180,role:"Solar beam",unlockLevel:3,strength:"Long range and strong focused hits",weakness:"Expensive and slower firing",color:"#73d8ec",symbol:"🔷",damage:34,range:205,rate:.9,projectile:700,desc:"Focuses sunlight into piercing energy bolts."},
-
-{id:"mortar",category:"Primary",name:"Dawnfire Mortar",cost:160,role:"Area damage",unlockLevel:4,strength:"Punishes tightly packed enemies",weakness:"Slow attacks can miss fast targets",color:"#e58b4d",symbol:"☄️",damage:35,range:270,rate:1.7,projectile:300,splash:65,desc:"Lobs explosive shells into enemy clusters."},
-
-{id:"ballista",category:"Military",nameconst paths=[
-{name:"POWER",color:"#e9a45d",names:["Sharper Strikes","Ironwood Tips","Grove Crusher","Ancient Wrath","WORLDROOT COLOSSUS"],desc:["Increase damage by 48%.","Break through enemy armor more effectively.","Add a damaging root burst.","Heavy strikes gain a larger blast.","Transform into a colossal root guardian."]},
-{name:"RANGE",color:"#80c9e9",names:["Keen Sight","Canopy Watch","Sunward Focus","Celestial Reach","STARLIGHT SENTINEL"],desc:["Increase attack range.","Extend range further.","Shots pierce additional enemies.","Gain piercing force and bonus damage.","Transform into a radiant long-range sentinel."]},
-{name:"SPEED",color:"#9bd78b",names:["Quick Growth","Rapid Bloom","Wild Barrage","Unending Volley","EVERBLOOM AVATAR"],desc:["Attack faster.","Greatly improve attack speed.","Gain extra projectile force.","Further increase attack speed.","Transform into a rapid nature-energy avatar."]}
-];
-const costs=[[45,75,125,220,450],[40,70,120,210,430],[50,80,135,230,470]];
-const enemyTypes={
-tick:{name:"Tin Tick",hp:30,speed:92,reward:7,radius:13,color:"#c9b6a0",armor:0},
-beetle:{name:"Cog Beetle",hp:100,speed:49,reward:14,radius:18,color:"#a87942",armor:.2},
-hopper:{name:"Springtail Hopper",hp:65,speed:112,reward:12,radius:14,color:"#b9d36e",armor:0},
-wasp:{name:"Brass Wasp",hp:50,speed:135,reward:13,radius:12,color:"#e8c35d",armor:0},
-shell:{name:"Iron Shellback",hp:230,speed:34,reward:23,radius:21,color:"#7c8790",armor:.48},
-centipede:{name:"Clockwork Centipede",hp:1100,speed:36,reward:120,radius:28,color:"#a65b45",armor:.3},
-titan:{name:"Grovebreaker Titan",hp:5200,speed:24,reward:350,radius:39,color:"#604b70",armor:.38}
-};
-let money=650,lives=100,round=0,running=false,ended=false,speed=1,lastTime=0,spawnTimer=0,queue=[];
-const SAVE_KEY="guardiansOfTheGrove_v1_save";
-const defaultProfile={level:1,xp:0,totalXp:0,unlockedLevel:1,unlockedTowers:["sprout"],completed:{},medals:{},gamesWon:0};
-let profile=loadSave(),selectedMap=profile.lastMap||1,difficulty=profile.lastDifficulty||"easy",campaignRun=false;
-const difficultyData={easy:{label:"Easy",cash:750,lives:150,hp:.78,speed:.92,xp:1},normal:{label:"Normal",cash:650,lives:100,hp:1,speed:1,xp:1.25},hard:{label:"Hard",cash:550,lives:75,hp:1.32,speed:1.12,xp:1.6}};
-function loadSave(){try{let d=JSON.parse(localStorage.getItem(SAVE_KEY));return d?{...defaultProfile,...d}:JSON.parse(JSON.stringify(defaultProfile))}catch(e){return {...defaultProfile,completed:{},medals:{},unlockedTowers:["sprout"]}}}
-function saveProfile(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(profile));}catch(e){$("menuStatus").textContent="Could not save automatically. Export a backup to protect your progress."}renderProfile();}
-function xpNeeded(level){return Math.floor(100+Math.pow(level-1,1.35)*45)}
-function addXP(amount){if(amount<=0)return;profile.xp+=Math.floor(amount);profile.totalXp+=Math.floor(amount);let gained=0;while(profile.xp>=xpNeeded(profile.level)){profile.xp-=xpNeeded(profile.level);profile.level++;gained++;}unlockTowersByLevel();saveProfile();if(gained)message("PLAYER LEVEL UP! Level "+profile.level+" reached.");}
-function unlockTowersByLevel(){for(const t of towerTypes){if(profile.level>=t.unlockLevel&&!profile.unlockedTowers.includes(t.id)){profile.unlockedTowers.push(t.id);if(typeof message==="function")message(t.name+" unlocked!");}}}
-function renderProfile(){let need=xpNeeded(profile.level);$("profileLevel").textContent=profile.level;$("profileTitle").textContent=profile.level<5?"Grove Initiate":profile.level<10?"Forest Guardian":profile.level<20?"Canopy Champion":"Ancient Grovekeeper";$("profileXpText").textContent=profile.xp+" / "+need+" XP · "+profile.totalXp+" total";$("profileXpBar").style.width=Math.min(100,profile.xp/need*100)+"%";$("hudLevel").textContent=profile.level;$("hudXp").textContent=profile.xp+" XP";renderMapGrid();}
-function renderMapGrid(){let g=$("mapGrid");if(!g)return;g.innerHTML="";mapDefs.forEach(m=>{let unlocked=m.id<=profile.unlockedLevel,b=document.createElement("button");b.className="map-card"+(selectedMap===m.id?" chosen":"");b.disabled=!unlocked;b.innerHTML=`<div class="map-num">LEVEL ${String(m.id).padStart(2,"0")}</div><div class="map-name">${m.name}</div><div class="map-desc">${m.desc}</div><div class="map-lock">${unlocked?(profile.completed[m.id]?"✓ COMPLETED":"UNLOCKED"):"🔒 COMPLETE LEVEL "+(m.id-1)+" FIRST"}</div>`;b.onclick=()=>{selectedMap=m.id;profile.lastMap=selectedMap;saveProfile();renderMapGrid();};g.appendChild(b);});}
-function setDifficulty(d){difficulty=d;profile.lastDifficulty=d;saveProfile();document.querySelectorAll(".diff-btn").forEach(b=>b.classList.toggle("active",b.dataset.diff===d));}
-function launchLevel(){let m=mapDefs.find(x=>x.id===selectedMap);if(!m||selectedMap>profile.unlockedLevel)return;pathPoints=m.path.map(p=>({...p}));campaignRun=true;money=difficultyData[difficulty].cash;lives=difficultyData[difficulty].lives;round=0;running=false;ended=false;speed=1;queue=[];enemies=[];towers=[];projectiles=[];particles=[];selected=null;placingType=null;nextTowerId=1;decor=[];initDecor();$("gameEnd").style.display="none";$("campaignMenu").style.display="none";$("roundStatus").textContent=m.name+" · "+difficultyData[difficulty].label+" difficulty. Defend the Sacred Sun Crystal!";$("speedButton").textContent="SPEED 1×";document.querySelectorAll(".tower-pick").forEach(b=>b.classList.remove("active"));buildTowerGrid();updateUI();saveProfile();}
-function returnToCampaign(){if(!ended&&(running||enemies.length||round>0)){if(!confirm("Leave this level? Your campaign unlocks and player XP are saved, but this battle will be abandoned."))return;}running=false;campaignRun=false;enemies=[];projectiles=[];particles=[];$("campaignMenu").style.display="flex";renderProfile();buildTowerGrid();updateUI();}
-function exportSave(){let blob=new Blob([JSON.stringify(profile,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="guardians-of-the-grove-save.json";a.click();URL.revokeObjectURL(url);}
-function importSave(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Number.isInteger(d.level)||!Array.isArray(d.unlockedTowers))throw Error("Invalid save");profile={...defaultProfile,...d};profile.unlockedTowers=[...new Set(["sprout",...profile.unlockedTowers])];unlockTowersByLevel();saveProfile();buildTowerGrid();message("Save imported successfully.");}catch(err){alert("That save file is not valid.");}};r.readAsText(f);e.target.value="";}
-function resetSave(){if(!confirm("Erase all Guardians of the Grove progress in this browser? Export a backup first if needed."))return;profile={...defaultProfile,completed:{},medals:{},unlockedTowers:["sprout"]};saveProfile();buildTowerGrid();selectedMap=1;renderMapGrid();}
-
-let enemies=[],towers=[],projectiles=[],particles=[],decor=[],selected=null,placingType=null,nextTowerId=1,mouse={x:-100,y:-100};
-const $=id=>document.getElementById(id),typeOf=id=>towerTypes.find(t=>t.id===id);
-const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-function makeTower(type,x,y){return{id:nextTowerId++,type:type.id,x,y,upgrades:[0,0,0],cooldown:0,angle:0,kills:0,damageDone:0,supportSpeed:1,supportRange:1,flash:0};}
-function stats(t){
- const b=typeOf(t.type),[p,r,s]=t.upgrades;
- let damage=b.damage,range=b.range,rate=b.rate,projectile=b.projectile||450,splash=b.splash||0,pierce=b.pierce||1,slow=b.slow||0,armorBreak=0;
- damage+=p*b.damage*.48;range+=r*30;if(rate)rate=Math.max(.075,rate*(1-s*.16));
- if(p>=2)armorBreak=.12;if(p>=3)splash=Math.max(splash,25);if(p>=4)splash=Math.max(splash,55);
- if(r>=3)pierce=Math.max(pierce,3);if(r>=4){damage*=1.25;pierce+=2}
- if(s>=3)pierce=Math.max(pierce,2);if(s>=4)projectile*=1.35;
- if(p>=5){damage*=3.1;splash=Math.max(splash,90)}
- if(r>=5){damage*=2.1;range+=100;pierce=9}
- if(s>=5){damage*=1.7;rate=Math.max(.065,rate*.48)}
- if(t.type==="rose"&&p>=2)slow=Math.max(slow,.72);
- if(t.type==="alchemist"&&p>=2)slow=Math.max(slow,.3);
- if(t.type==="prism"&&r>=2)armorBreak=Math.max(armorBreak,.2);
- if(t.type==="druid"&&p>=2)splash=Math.max(splash,75);
- if(t.type==="mortar"&&p>=2)splash=Math.max(splash,90);
- if(t.type==="ballista"&&p>=2)armorBreak=Math.max(armorBreak,.35);
- return{damage,range,rate,projectile,splash,pierce,slow,armorBreak,special:p>=5?"colossus":r>=5?"sentinel":s>=5?"avatar":""};
-}
-function upgradeAllowed(t,i){let a=[...t.upgrades];if(a[i]>=5)return false;a[i]++;return a.filter(v=>v>2).length<=2&&a.filter(v=>v===5).length<=1;}
-function buyUpgrade(i,tier){
- if(!selected)return;let t=selected;if(t.upgrades[i]!==tier-1||!upgradeAllowed(t,i))return;
- let cost=costs[i][tier-1];if(money<cost){message("Not enough Sun Droplets.");return}
- money-=cost;t.upgrades[i]=tier;message(paths[i].names[tier-1]+" unlocked!");saveProfile();updateUI();
-}
-function buildTowerGrid(){
- let g=$("towerGrid");g.innerHTML="";
- towerTypes.forEach(t=>{let b=document.createElement("button");b.className="tower-pick";b.id="pick-"+t.id;b.innerHTML=`<span class="tower-icon">${t.symbol}</span><span class="tower-label"><strong>${t.name}</strong><small>${t.cost} ☀</small></span>`;b.onclick=()=>chooseTower(t.id);g.appendChild(b)});
-}
-function chooseTower(id){
- if(ended)return;let t=typeOf(id);if(money<t.cost){message("Not enough Sun Droplets.");return}
- placingType=id;selected=null;document.querySelectorAll(".tower-pick").forEach(b=>b.classList.remove("active"));$("pick-"+id).classList.add("active");
- $("placeHint").textContent="Placement ready: click an open grass area. "+t.name+" — "+t.desc;updateUI();
-}
-let messageTimer;
-function message(text){let el=$("message");el.textContent=text;el.classList.add("show");clearTimeout(messageTimer);messageTimer=setTimeout(()=>el.classList.remove("show"),1800);}
-function updateUI(){
- $("money").textContent=Math.floor(money);$("lives").textContent=lives;$("round").textContent=round+" / "+MAX_ROUNDS;
- $("roundButton").disabled=running||ended||round>=MAX_ROUNDS;$("roundButton").textContent=round>=MAX_ROUNDS?"CAMPAIGN COMPLETE":"START ROUND "+(round+1);
- let info=$("towerInfo"),box=$("upgradePaths"),sell=$("sellButton");box.innerHTML="";
- if(!selected||!towers.includes(selected)){info.innerHTML='<p class="selected-empty">Select a placed guardian to view its combat statistics, crosspath and upgrade paths.</p>';$("selectionTag").textContent="NO SELECTION";sell.disabled=true;$("upgradeMessage").textContent="";return}
- sell.disabled=false;let t=selected,b=typeOf(t.type),st=stats(t);$("selectionTag").textContent="GUARDIAN #"+t.id;
- info.innerHTML=`<div class="tower-detail"><div class="detail-icon">${b.symbol}</div><div><div class="detail-name">${b.name}</div><div class="detail-sub">${b.role} · ${b.desc}</div></div></div>
- <div class="statrow"><div class="stat"><small>DAMAGE</small><b>${Math.round(st.damage)}</b></div><div class="stat"><small>RANGE</small><b>${Math.round(st.range)}</b></div><div class="stat"><small>ATTACK</small><b>${st.rate?st.rate.toFixed(2)+"s":"AURA"}</b></div></div>
- <div class="crosspath">CROSSPATH <b>${t.upgrades.join("-")}</b> · KILLS <b>${t.kills}</b></div>`;
- paths.forEach((path,i)=>{
- let p=document.createElement("div");p.className="path";let head=document.createElement("div");head.className="path-head";head.innerHTML=`<b style="color:${path.color}">PATH ${i+1} · ${path.name}</b><span>${t.upgrades[i]}/5</span>`;p.appendChild(head);
- let tiers=document.createElement("div");tiers.className="tiers";
- for(let n=1;n<=5;n++){let b=document.createElement("button"),owned=t.upgrades[i]>=n,next=t.upgrades[i]===n-1,allowed=next&&upgradeAllowed(t,i);b.className="tier"+(owned?" owned":allowed?" next":"");b.innerHTML=`${n}<small>${owned?"OWNED":next?costs[i][n-1]+" ☀":"LOCKED"}</small>`;b.disabled=!owned&&(!allowed||money<costs[i][n-1]||ended);b.title=path.names[n-1]+" — "+path.desc[n-1];b.onclick=()=>buyUpgrade(i,n);tiers.appendChild(b)}
- p.appendChild(tiers);let d=document.createElement("p");d.className="path-desc";d.textContent=t.upgrades[i]?path.desc[t.upgrades[i]-1]:"Choose this path to shape your guardian.";p.appendChild(d);box.appendChild(p);
- });
- $("upgradeMessage").textContent="Tier 5 is a major guardian transformation.";
-}
-function toggleSpeed(){speed=speed===1?2:speed===2?3:1;$("speedButton").textContent="SPEED "+speed+"×";}
-function createRound(n){
- let list=[],count=8+n*2;
- for(let i=0;i<count;i++){let t="tick";if(n>=3&&i%5===2)t="beetle";if(n>=6&&i%6===3)t="hopper";if(n>=9&&i%7===4)t="wasp";if(n>=13&&i%6===1)t="shell";if(n>=18&&i%5===0)t="beetle";if(n>=22&&i%7===2)t="shell";list.push(t)}
- if(n===10)list.push("centipede");if(n===20)list.push("centipede","centipede");if(n===30)list.push("titan","centipede");return list;
-}
-function startRound(){if(running||ended||round>=MAX_ROUNDS)return;round++;running=true;queue=createRound(round);spawnTimer=0;$("roundStatus").textContent="Round "+round+" — invaders approaching!";updateUI();}
-function spawnEnemy(type){
- let d=enemyTypes[type],scale=(1+(round-1)*.12)*difficultyData[difficulty].hp;
- enemies.push({type,x:pathPoints[0].x,y:pathPoints[0].y,segment:0,progress:0,hp:d.hp*scale,maxHp:d.hp*scale,speed:d.speed*(1+(round-1)*.012)*difficultyData[difficulty].speed,reward:d.reward,radius:d.radius,color:d.color,armor:d.armor,slowTimer:0,flash:0,phase:Math.random()*6});
-}
-function pathPosition(e){let a=pathPoints[e.segment],b=pathPoints[e.segment+1];if(!a||!b)return;let len=dist(a,b),t=Math.min(1,e.progress/len);e.x=a.x+(b.x-a.x)*t;e.y=a.y+(b.y-a.y)*t;}
-function inRange(a,b,r){return dist(a,b)<=r;}
-function update(dt){
- if(ended)return;let step=dt*speed;
- for(let t of towers){t.supportSpeed=1;t.supportRange=1;}
- for(let t of towers){let st=stats(t);if(t.type==="moonwell"){for(let o of towers)if(o!==t&&inRange(t,o,st.range)){o.supportSpeed=Math.max(o.supportSpeed,1.2+(t.upgrades[2]*.04));o.supportRange=Math.max(o.supportRange,1.12+(t.upgrades[1]*.025));}}
- if(t.type==="alchemist"&&t.upgrades[1]>=2){for(let o of towers)if(o!==t&&inRange(t,o,st.range))o.supportSpeed=Math.max(o.supportSpeed,1.08);}}
- if(running){spawnTimer-=step;if(queue.length&&spawnTimer<=0){spawnEnemy(queue.shift());spawnTimer=.48;}}
- for(let i=enemies.length-1;i>=0;i--){let e=enemies[i],move=e.speed*(e.slowTimer>0?.55:1)*step;e.slowTimer=Math.max(0,e.slowTimer-step);while(move>0&&e.segment<pathPoints.length-1){let a=pathPoints[e.segment],b=pathPoints[e.segment+1],len=dist(a,b),amount=Math.min(move,len-e.progress);e.progress+=amount;move-=amount;pathPosition(e);if(e.progress>=len){e.segment++;e.progress=0;}}
- if(e.segment>=pathPoints.length-1){enemies.splice(i,1);lives-=e.type==="titan"?15:e.type==="centipede"?8:1;if(lives<=0){lives=0;finish(false);return}updateUI();}}
- for(let t of towers){let b=typeOf(t.type),st=stats(t);t.flash=Math.max(0,t.flash-step);if(t.type==="moonwell")continue;t.cooldown-=step*t.supportSpeed;let target=null,best=-1;for(let e of enemies)if(inRange(t,e,st.range*t.supportRange)){let prog=e.segment*2000+e.progress;if(prog>best){best=prog;target=e;}}
- if(target&&t.cooldown<=0){t.angle=Math.atan2(target.y-t.y,target.x-t.x);projectiles.push({x:t.x,y:t.y,target,damage:st.damage,speed:st.projectile,pierce:st.pierce,splash:st.splash,slow:st.slow,armorBreak:st.armorBreak,color:b.color,owner:t,type:t.type});t.cooldown=st.rate||1;t.flash=.12;}}
- for(let i=projectiles.length-1;i>=0;i--){let p=projectiles[i];if(!enemies.includes(p.target)){projectiles.splice(i,1);continue}let dx=p.target.x-p.x,dy=p.target.y-p.y,d=Math.hypot(dx,dy),mv=p.speed*step;if(d<=mv+5){hit(p.target,p.damage,p.owner,p.slow,p.armorBreak);if(p.splash>0){let center={x:p.target.x,y:p.target.y};for(let e of [...enemies])if(e!==p.target&&dist(e,center)<p.splash)hit(e,p.damage*.65,p.owner,p.slow,p.armorBreak);burst(center.x,center.y,p.color,10);}if(p.pierce>1){p.pierce--;let next=enemies.find(e=>e!==p.target&&dist(e,p.target)>8);if(next)p.target=next;else projectiles.splice(i,1);}else projectiles.splice(i,1);}else{p.x+=dx/d*mv;p.y+=dy/d*mv;}}
- for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.life-=step;p.x+=p.vx*step;p.y+=p.vy*step;if(p.life<=0)particles.splice(i,1);}
- if(running&&queue.length===0&&enemies.length===0){running=false;money+=45+round*5;let earned=Math.round((20+round*4)*difficultyData[difficulty].xp);addXP(earned);$("roundStatus").textContent="Round "+round+" cleared · bonus "+(45+round*5)+" Sun Droplets · "+earned+" XP.";updateUI();if(round>=MAX_ROUNDS)finish(true);}
-}
-function hit(e,damage,owner,slow,armorBreak=0){if(!enemies.includes(e))return;let actual=damage*(1-Math.max(0,e.armor-armorBreak));e.hp-=actual;e.flash=.12;owner.damageDone+=actual;if(slow)e.slowTimer=Math.max(e.slowTimer,1.5);if(e.hp<=0){enemies.splice(enemies.indexOf(e),1);owner.kills++;money+=e.reward;let killXP=Math.max(1,Math.round(2*difficultyData[difficulty].xp));addXP(killXP);burst(e.x,e.y,"#f4d77d",8);updateUI();}}
-function burst(x,y,color,count){for(let i=0;i<count;i++){let a=Math.random()*Math.PI*2,s=25+Math.random()*100;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.35+Math.random()*.4,color});}}
-function sellSelected(){if(!selected)return;let invested=typeOf(selected.type).cost;selected.upgrades.forEach((v,i)=>{for(let n=0;n<v;n++)invested+=costs[i][n]});money+=Math.floor(invested*.7);saveProfile();towers=towers.filter(t=>t!==selected);selected=null;updateUI();message("Guardian sold · 70% refunded.");}
-function finish(won){ended=true;running=false;if(won&&campaignRun){let id=selectedMap;profile.completed[id]=true;profile.gamesWon++;if(id<mapDefs.length)profile.unlockedLevel=Math.max(profile.unlockedLevel,id+1);let medal=difficulty==="hard"?"gold":difficulty==="normal"?"silver":"bronze";let rank={bronze:1,silver:2,gold:3};let old=profile.medals[id];if(!old||rank[medal]>rank[old])profile.medals[id]=medal;let clearXP=Math.round((150+id*35)*difficultyData[difficulty].xp);addXP(clearXP);saveProfile();$("endText").textContent="Level "+id+" completed! "+clearXP+" bonus XP earned. "+(id<9?"The next grove has been unlocked.":"You have restored all nine sacred groves!");}else if(!won&&campaignRun){addXP(Math.round(round*3*difficultyData[difficulty].xp));saveProfile();}$("gameEnd").style.display="flex";$("endTitle").textContent=won?"THE GROVE IS SAVED!":"THE GROVE HAS FALLEN";if(!won)$("endText").textContent="The invaders overwhelmed the Sacred Sun Crystal. You earned some battle XP. Regroup your guardians and defend the Grove again.";else if(!campaignRun)$("endText").textContent="You survived all 30 rounds and defeated the Grovebreaker Titan. The Sacred Sun Crystal shines safely once more.";updateUI();}
-function restartGame(){money=650;lives=100;round=0;running=false;ended=false;speed=1;queue=[];enemies=[];towers=[];projectiles=[];particles=[];selected=null;placingType=null;nextTowerId=1;$("gameEnd").style.display="none";$("roundStatus").textContent="Build your defenses before the first wave.";$("speedButton").textContent="SPEED 1×";$("placeHint").textContent="Select a defender to prepare its placement.";document.querySelectorAll(".tower-pick").forEach(b=>b.classList.remove("active"));updateUI();}
-function isOnPath(x,y){for(let i=0;i<pathPoints.length-1;i++){let a=pathPoints[i],b=pathPoints[i+1],dx=b.x-a.x,dy=b.y-a.y,len=dx*dx+dy*dy,t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/len));if(Math.hypot(x-(a.x+t*dx),y-(a.y+t*dy))<PATH_WIDTH/2+22)return true;}return false;}
-function canvasPoint(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
-canvas.addEventListener("pointermove",e=>{mouse=canvasPoint(e);});
-canvas.addEventListener("pointerleave",()=>{mouse.x=-100;mouse.y=-100;});
-canvas.addEventListener("pointerdown",event=>{
- if(ended)return;let p=canvasPoint(event);
- if(placingType){let b=typeOf(placingType);if(money<b.cost){message("Not enough Sun Droplets.");return}if(isOnPath(p.x,p.y)){message("Guardians must stand on grass.");return}if(towers.some(t=>dist(t,p)<39)){message("That spot is too crowded.");return}
- let t=makeTower(b,p.x,p.y);towers.push(t);money-=b.cost;selected=t;placingType=null;saveProfile();document.querySelectorAll(".tower-pick").forEach(b=>b.classList.remove("active"));$("placeHint").textContent="Guardian placed. Choose upgrades or another guardian.";updateUI();return;}
- selected=[...towers].reverse().find(t=>dist(t,p)<29)||null;updateUI();
-});
-function initDecor(){decor=[];for(let i=0;i<95;i++){let x=(i*197+53)%W,y=(i*113+37)%H;if(!isOnPath(x,y))decor.push({x,y,r:4+(i%5)*1.6,kind:i%4,phase:i*.7});}}
-function drawTree(x,y,s,hue=0){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle="#4b3826";ctx.fillRect(-3,1,6,17);let colors=["#315b38","#3e7041","#527f48"];for(let i=0;i<3;i++){ctx.fillStyle=colors[(i+hue)%3];ctx.beginPath();ctx.moveTo(0,-30+i*9);ctx.lineTo(-15+i*3,-5+i*9);ctx.lineTo(15-i*3,-5+i*9);ctx.closePath();ctx.fill();}ctx.restore();}
-function drawBackground(){
- let theme=mapDefs[selectedMap-1]?.bg||["#83a95f","#668e4d","#527c45"];let g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,theme[0]);g.addColorStop(.55,theme[1]);g.addColorStop(1,theme[2]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
- for(let d of decor){ctx.globalAlpha=.17;ctx.fillStyle=d.kind%2?"#d5e4a0":"#244c2b";ctx.beginPath();ctx.ellipse(d.x,d.y,d.r,d.r*.55,d.phase,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
- // Forest framing and ornamental clearings
- for(let i=0;i<11;i++){let x=i*123+24;drawTree(x,25,.8+(i%3)*.12,i%3);drawTree(x+42,650,.72+(i%2)*.16,(i+1)%3);}
- for(let i=0;i<6;i++){drawTree(18,100+i*92,.72,i%3);drawTree(1180,85+i*100,.7,(i+1)%3);}
- ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#493b2a";ctx.lineWidth=PATH_WIDTH+15;ctx.beginPath();pathPoints.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
- ctx.strokeStyle="#a88b5c";ctx.lineWidth=PATH_WIDTH;ctx.beginPath();pathPoints.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
- ctx.strokeStyle="#c6ae7d";ctx.lineWidth=2;ctx.setLineDash([13,16]);ctx.beginPath();pathPoints.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);
- // soft grass highlights
- ctx.globalAlpha=.15;ctx.strokeStyle="#eff4c2";ctx.lineWidth=2;for(let i=0;i<20;i++){let x=(i*67)%W,y=(i*139+70)%H;if(!isOnPath(x,y)){ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*1.2);ctx.stroke();}}ctx.globalAlpha=1;
- drawCrystal();
-}
-function drawCrystal(){ctx.save();ctx.translate(1135,315);let pulse=1+Math.sin(performance.now()*.003)*.06;ctx.scale(pulse,pulse);ctx.shadowBlur=34;ctx.shadowColor="#ffe88b";ctx.fillStyle="#fff0a0";ctx.beginPath();ctx.moveTo(0,-39);ctx.lineTo(24,-8);ctx.lineTo(17,25);ctx.lineTo(0,35);ctx.lineTo(-17,25);ctx.lineTo(-24,-8);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle="#fffbd5";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#fff";ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.fillText("SUN",0,55);ctx.restore();}
-function drawRange(t){let st=stats(t);ctx.save();ctx.fillStyle="#fff4a5";ctx.globalAlpha=.075;ctx.beginPath();ctx.arc(t.x,t.y,st.range*t.supportRange,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.55;ctx.strokeStyle="#fff1a1";ctx.lineWidth=2;ctx.setLineDash([7,7]);ctx.beginPath();ctx.arc(t.x,t.y,st.range*t.supportRange,0,Math.PI*2);ctx.stroke();ctx.restore();}
-function drawTower(t){
- let b=typeOf(t.type),st=stats(t),total=t.upgrades.reduce((a,v)=>a+v,0),r=st.special?27:21;
- if(t===selected)drawRange(t);
- ctx.save();ctx.translate(t.x,t.y);
- // base shadow and carved platform
- ctx.fillStyle="#263e2b";ctx.beginPath();ctx.ellipse(0,13,29,16,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#b49a65";ctx.beginPath();ctx.ellipse(0,10,24,12,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#526f3c";ctx.beginPath();ctx.ellipse(0,8,20,9,0,0,Math.PI*2);ctx.fill();
- if(t.type==="sprout"){ctx.strokeStyle="#5b3c25";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(0,9);ctx.lineTo(0,-12);ctx.stroke();ctx.fillStyle="#78c85f";ctx.beginPath();ctx.ellipse(-7,-11,9,5,-.6,0,Math.PI*2);ctx.ellipse(8,-17,9,5,.6,0,Math.PI*2);ctx.fill();ctx.fillStyle="#d6b56b";ctx.beginPath();ctx.arc(0,-5,8,0,Math.PI*2);ctx.fill();}
- else if(t.type==="thorn"){ctx.fillStyle="#376d37";ctx.beginPath();ctx.arc(0,-3,19,0,Math.PI*2);ctx.fill();for(let i=0;i<9;i++){let a=i*Math.PI*2/9;ctx.save();ctx.rotate(a);ctx.fillStyle=i%2?"#8ecf60":"#b4df77";ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(-4,-25);ctx.lineTo(4,-25);ctx.closePath();ctx.fill();ctx.restore();}ctx.fillStyle="#e0d59c";ctx.beginPath();ctx.arc(0,-3,6,0,Math.PI*2);ctx.fill();}
- else if(t.type==="prism"){ctx.fillStyle="#286a83";ctx.beginPath();ctx.moveTo(0,-27);ctx.lineTo(19,-4);ctx.lineTo(10,17);ctx.lineTo(-10,17);ctx.lineTo(-19,-4);ctx.closePath();ctx.fill();ctx.strokeStyle="#b8f5ff";ctx.lineWidth=2;ctx.stroke();ctx.fillStyle="#d9ffff";ctx.beginPath();ctx.moveTo(0,-21);ctx.lineTo(8,-3);ctx.lineTo(0,11);ctx.lineTo(-8,-3);ctx.closePath();ctx.fill();}
- else if(t.type==="mortar"){ctx.fillStyle="#9b5a36";ctx.beginPath();ctx.arc(0,-5,20,0,Math.PI*2);ctx.fill();ctx.save();ctx.rotate(t.angle);ctx.fillStyle="#392d28";ctx.beginPath();ctx.roundRect(-1,-9,29,18,5);ctx.fill();ctx.strokeStyle="#f0b46a";ctx.lineWidth=3;ctx.stroke();ctx.restore();ctx.fillStyle="#e6a052";ctx.beginPath();ctx.arc(0,-5,8,0,Math.PI*2);ctx.fill();}
- else if(t.type==="ballista"){ctx.fillStyle="#725b39";ctx.fillRect(-6,-21,12,34);ctx.save();ctx.rotate(t.angle);ctx.strokeStyle="#c4b27b";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-22,-12);ctx.quadraticCurveTo(0,0,22,-12);ctx.stroke();ctx.strokeStyle="#eee0b2";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-19,-12);ctx.lineTo(20,-12);ctx.stroke();ctx.fillStyle="#e2d7a9";ctx.fillRect(0,-15,23,5);ctx.restore();}
- else if(t.type==="rose"){ctx.fillStyle="#397347";ctx.beginPath();ctx.arc(0,-4,19,0,Math.PI*2);ctx.fill();for(let i=0;i<5;i++){let a=i*Math.PI*2/5;ctx.fillStyle="#d77da8";ctx.beginPath();ctx.ellipse(Math.cos(a)*8,-8+Math.sin(a)*8,7,10,a,0,Math.PI*2);ctx.fill();}ctx.fillStyle="#f5d77d";ctx.beginPath();ctx.arc(0,-8,5,0,Math.PI*2);ctx.fill();}
- else if(t.type==="alchemist"){ctx.fillStyle="#654b83";ctx.beginPath();ctx.roundRect(-13,-24,26,36,7);ctx.fill();ctx.fillStyle="#c8a7f0";ctx.fillRect(-8,-29,16,8);ctx.fillStyle="#a7f1c3";ctx.beginPath();ctx.arc(0,-6,8,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#e7d6ff";ctx.lineWidth=2;ctx.strokeRect(-13,-24,26,36);}
- else if(t.type==="moonwell"){ctx.fillStyle="#567e9c";ctx.beginPath();ctx.moveTo(-17,10);ctx.lineTo(-12,-18);ctx.lineTo(0,-29);ctx.lineTo(12,-18);ctx.lineTo(17,10);ctx.closePath();ctx.fill();ctx.strokeStyle="#d8f0ff";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#e6f8ff";ctx.font="bold 28px Georgia";ctx.textAlign="center";ctx.fillText("☾",0,0);}
- else if(t.type==="druid"){ctx.fillStyle="#456f3b";ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(17,2);ctx.lineTo(0,14);ctx.lineTo(-17,2);ctx.closePath();ctx.fill();ctx.strokeStyle="#c5e98b";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle="#dfffaa";ctx.font="bold 19px Arial";ctx.textAlign="center";ctx.fillText("ϟ",0,3);}
- if(t.type!=="moonwell"&&t.type!=="thorn"&&t.type!=="rose"&&t.type!=="prism"&&t.type!=="alchemist"&&t.type!=="druid"&&t.type!=="sprout"){ctx.strokeStyle="#f5d58c";ctx.lineWidth=2;ctx.strokeRect(-r,-r,r*2,r*2);}
- if(st.special){ctx.strokeStyle=st.special==="sentinel"?"#b7f4ff":st.special==="avatar"?"#c9ff9b":"#ffdc82";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,-4,31+Math.sin(performance.now()*.006)*2,0,Math.PI*2);ctx.stroke();}
- if(t.flash>0){ctx.globalAlpha=t.flash/.12;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(0,-5,24,0,Math.PI*2);ctx.fill();}
- ctx.restore();
- ctx.fillStyle="#fff7d5";ctx.font="bold 10px Arial";ctx.textAlign="center";ctx.shadowColor="#1b2818";ctx.shadowBlur=4;ctx.fillText(b.name.split(" ")[0],t.x,t.y-34);ctx.shadowBlur=0;if(total){ctx.fillStyle="#f6d889";ctx.fillText("★"+total,t.x,t.y+43);}
-}
-function drawEnemy(e){
- ctx.save();ctx.translate(e.x,e.y);let pulse=1+Math.sin(performance.now()*.008+e.phase)*.035;ctx.scale(pulse,pulse);
- ctx.fillStyle="#2d3028";ctx.beginPath();ctx.ellipse(0,5,e.radius*1.15,e.radius*.78,0,0,Math.PI*2);ctx.fill();
- if(e.type==="wasp"){ctx.fillStyle=e.color;ctx.beginPath();ctx.ellipse(0,0,e.radius*1.1,e.radius*.75,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#654d23";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-4,-7);ctx.lineTo(-4,7);ctx.moveTo(5,-7);ctx.lineTo(5,7);ctx.stroke();ctx.strokeStyle="#eee0a0";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-5,-8);ctx.lineTo(-16,-19);ctx.moveTo(5,-8);ctx.lineTo(16,-19);ctx.stroke();}
- else if(e.type==="centipede"||e.type==="titan"){for(let i=3;i>=0;i--){ctx.fillStyle=i%2?"#6e5145":e.color;ctx.beginPath();ctx.arc(-i*e.radius*.55,0,e.radius*(.72-i*.07),0,Math.PI*2);ctx.fill();ctx.strokeStyle="#3d3029";ctx.lineWidth=2;ctx.stroke();}ctx.fillStyle="#f1d38a";ctx.beginPath();ctx.arc(5,-7,4,0,Math.PI*2);ctx.arc(14,-7,4,0,Math.PI*2);ctx.fill();}
- else {ctx.fillStyle=e.color;ctx.beginPath();if(e.type==="hopper"){ctx.moveTo(0,-e.radius);ctx.lineTo(e.radius,0);ctx.lineTo(0,e.radius);ctx.lineTo(-e.radius,0);ctx.closePath();}else if(e.type==="shell"){ctx.ellipse(0,0,e.radius*1.15,e.radius*.85,0,0,Math.PI*2);}else{ctx.arc(0,0,e.radius,0,Math.PI*2);}ctx.fill();ctx.strokeStyle="#463c2f";ctx.lineWidth=3;ctx.stroke();if(e.type==="beetle"||e.type==="shell"){ctx.strokeStyle="#e1c58c";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-e.radius*.7);ctx.lineTo(0,e.radius*.7);ctx.stroke();}}
- ctx.fillStyle="#252b24";ctx.beginPath();ctx.arc(-5,-3,2.8,0,Math.PI*2);ctx.arc(6,-3,2.8,0,Math.PI*2);ctx.fill();
- if(e.flash>0){ctx.globalAlpha=e.flash/.12;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(0,0,e.radius+2,0,Math.PI*2);ctx.fill();}
- ctx.restore();
- let w=e.radius*2.2;ctx.fillStyle="#28352b";ctx.fillRect(e.x-w/2,e.y-e.radius-12,w,5);ctx.fillStyle=e.type==="titan"?"#e6b95e":"#e26d60";ctx.fillRect(e.x-w/2,e.y-e.radius-12,w*Math.max(0,e.hp/e.maxHp),5);
-}
-function draw(){
- drawBackground();for(let t of towers)drawTower(t);for(let e of enemies)drawEnemy(e);
- for(let p of projectiles){ctx.save();ctx.fillStyle=p.color;ctx.shadowBlur=12;ctx.shadowColor=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.type==="prism"?5:4,0,Math.PI*2);ctx.fill();ctx.restore();}
- for(let p of particles){ctx.globalAlpha=Math.max(0,p.life/.75);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
- if(placingType&&mouse.x>=0){let b=typeOf(placingType),valid=!isOnPath(mouse.x,mouse.y)&&!towers.some(t=>dist(t,mouse)<39);ctx.save();ctx.globalAlpha=.35;ctx.fillStyle=valid?"#e7f4bd":"#ef7668";ctx.beginPath();ctx.arc(mouse.x,mouse.y,20,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.7;ctx.strokeStyle=valid?"#f4e4a5":"#ff9a8d";ctx.setLineDash([6,5]);ctx.beginPath();ctx.arc(mouse.x,mouse.y,b.range,0,Math.PI*2);ctx.stroke();ctx.restore();}
- if(!running&&round===0&&!ended){ctx.fillStyle="#243820";ctx.font="bold 18px Arial";ctx.fillText("DEFEND THE SACRED SUN CRYSTAL",26,48);}
-}
-function loop(ts){let dt=Math.min(.04,(ts-lastTime)/1000||0);lastTime=ts;update(dt);draw();requestAnimationFrame(loop);}
-unlockTowersByLevel();
-buildTowerGrid();
-initDecor();
-renderProfile();
-renderMapGrid();
-setDifficulty(difficulty);
-updateUI();
-
-const introScreen = document.getElementById("introScreen");
-const playButton = document.getElementById("playButton");
-
-setTimeout(() => {
-  playButton.style.display = "inline-block";
-}, 2000);
-
-playButton.addEventListener("click", () => {
-  introScreen.style.display = "none";
-  requestAnimationFrame(loop);
-});
-</script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
