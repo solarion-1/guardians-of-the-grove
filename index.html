@@ -222,17 +222,16 @@ const mapDefs=[
 {id:9,name:"Heart of the Grove",region:"Sacred crystal sanctuary",desc:"The final defense. Every enemy type and the Grovebreaker Titan await.",path:[[-35,340],[170,340],[170,100],[390,100],[390,540],[650,540],[650,100],[900,100],[900,480],[1160,480]],bg:["#779b60","#52784a","#34583d"]}
 ].map(m=>({...m,path:m.path.map(([x,y])=>({x,y}))}));
 const towerTypes=[
-{id:"sprout",name:"Brass Sproutling",cost:50,role:"Balanced attacker",unlockLevel:1,strength:"Low cost and flexible placement",weakness:"No extreme specialty",color:"#c58b4c",symbol:"🌱",damage:18,range:165,rate:.82,projectile:450,desc:"A dependable all-round defender."},
-{id:"thorn",name:"Thorncaster Bush",cost:95,role:"Rapid-fire",unlockLevel:2,strength:"Excellent against groups of light enemies",weakness:"Shorter range and modest damage per thorn",color:"#6eaf55",symbol:"🌿",damage:7,range:125,rate:.24,projectile:510,desc:"Unleashes quick volleys of sharp thorns."},
-{id:"prism",name:"Solar Lens Prism",cost:180,role:"Solar beam",unlockLevel:3,strength:"Long range and strong focused hits",weakness:"Expensive and slower firing",color:"#73d8ec",symbol:"🔷",damage:34,range:205,rate:.9,projectile:700,desc:"Focuses sunlight into piercing energy bolts."},
-{id:"mortar",name:"Dawnfire Mortar",cost:160,role:"Area damage",unlockLevel:4,strength:"Punishes tightly packed enemies",weakness:"Slow attacks can miss fast targets",color:"#e58b4d",symbol:"☄️",damage:35,range:270,rate:1.7,projectile:300,splash:65,desc:"Lobs explosive shells into enemy clusters."},
-{id:"ballista",name:"Bramble Ballista",cost:140,role:"Armor breaker",unlockLevel:5,strength:"High damage and armor penetration",weakness:"Slow attack cadence",color:"#b8a879",symbol:"🏹",damage:52,range:245,rate:1.35,projectile:760,pierce:3,desc:"Fires heavy bolts that punch through armor."},
-{id:"rose",name:"Tangling Rose Briar",cost:125,role:"Slow and control",unlockLevel:6,strength:"Slows dangerous enemies for the whole team",weakness:"Low direct damage",color:"#dc86ad",symbol:"🌹",damage:5,range:145,rate:.7,projectile:400,slow:.55,desc:"Entangling vines damage and slow invaders."},
-{id:"alchemist",name:"Grove Alchemist",cost:190,role:"Potion specialist",unlockLevel:7,strength:"Weakens enemies and can support allies",weakness:"Needs upgrades to reach full potential",color:"#b794e5",symbol:"⚗️",damage:13,range:155,rate:1.2,projectile:390,desc:"Hurls volatile brews that weaken enemies."},
-{id:"moonwell",name:"Moonwell Totem",cost:230,role:"Support aura",unlockLevel:8,strength:"Boosts nearby guardians without attacking",weakness:"Provides no direct damage",color:"#9bcdf0",symbol:"☾",damage:0,range:175,rate:0,desc:"Empowers nearby guardians with a moonlit aura."},
-{id:"druid",name:"Stormroot Druid",cost:210,role:"Nature magic",unlockLevel:9,strength:"Magic damage and area attacks",weakness:"Higher starting cost",color:"#a4d477",symbol:"⚡",damage:27,range:180,rate:.85,projectile:550,splash:30,desc:"Calls storms and roots to strike enemy groups."}
-];
-const paths=[
+const towerTypes=[
+{id:"sprout",category:"Primary",name:"Brass Sproutling",cost:50,role:"Balanced attacker",unlockLevel:1,strength:"Low cost and flexible placement",weakness:"No extreme specialty",color:"#c58b4c",symbol:"🌱",damage:18,range:165,rate:.82,projectile:450,desc:"A dependable all-round defender."},
+
+{id:"thorn",category:"Primary",name:"Thorncaster Bush",cost:95,role:"Rapid-fire",unlockLevel:2,strength:"Excellent against groups of light enemies",weakness:"Shorter range and modest damage per thorn",color:"#6eaf55",symbol:"🌿",damage:7,range:125,rate:.24,projectile:510,desc:"Unleashes quick volleys of sharp thorns."},
+
+{id:"prism",category:"Magic",name:"Solar Lens Prism",cost:180,role:"Solar beam",unlockLevel:3,strength:"Long range and strong focused hits",weakness:"Expensive and slower firing",color:"#73d8ec",symbol:"🔷",damage:34,range:205,rate:.9,projectile:700,desc:"Focuses sunlight into piercing energy bolts."},
+
+{id:"mortar",category:"Primary",name:"Dawnfire Mortar",cost:160,role:"Area damage",unlockLevel:4,strength:"Punishes tightly packed enemies",weakness:"Slow attacks can miss fast targets",color:"#e58b4d",symbol:"☄️",damage:35,range:270,rate:1.7,projectile:300,splash:65,desc:"Lobs explosive shells into enemy clusters."},
+
+{id:"ballista",category:"Military",nameconst paths=[
 {name:"POWER",color:"#e9a45d",names:["Sharper Strikes","Ironwood Tips","Grove Crusher","Ancient Wrath","WORLDROOT COLOSSUS"],desc:["Increase damage by 48%.","Break through enemy armor more effectively.","Add a damaging root burst.","Heavy strikes gain a larger blast.","Transform into a colossal root guardian."]},
 {name:"RANGE",color:"#80c9e9",names:["Keen Sight","Canopy Watch","Sunward Focus","Celestial Reach","STARLIGHT SENTINEL"],desc:["Increase attack range.","Extend range further.","Shots pierce additional enemies.","Gain piercing force and bonus damage.","Transform into a radiant long-range sentinel."]},
 {name:"SPEED",color:"#9bd78b",names:["Quick Growth","Rapid Bloom","Wild Barrage","Unending Volley","EVERBLOOM AVATAR"],desc:["Attack faster.","Greatly improve attack speed.","Gain extra projectile force.","Further increase attack speed.","Transform into a rapid nature-energy avatar."]}
