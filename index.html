@@ -105,9 +105,35 @@ canvas{width:100%;height:100%;display:block;cursor:crosshair;touch-action:manipu
  body{overflow:auto}.topbar{height:auto;min-height:58px;padding:7px 9px;align-items:flex-start;flex-direction:column;gap:6px}.brand{font-size:14px}.hud{width:100%;gap:5px}.hud-item{flex:1;padding:5px 3px;min-width:0;font-size:9px}.hud-item b{font-size:13px}
  .layout{height:auto;min-height:calc(100vh - 88px);min-height:calc(100dvh - 88px);display:flex;flex-direction:column}.stage{height:54vh;min-height:300px;max-height:560px}.sidebar{overflow:visible;border-left:0;border-top:1px solid #34503e}.tower-grid{grid-template-columns:repeat(3,1fr)}.tower-pick{padding:6px 4px}.tower-icon{width:24px;height:24px;flex-basis:24px;font-size:14px}.tower-label strong{font-size:9px}.mobile-hint{display:block}
 }
+
+.intro-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 38%,#294a32 0%,#101e16 48%,#050b08 100%);text-align:center;overflow:hidden}
+.intro-screen::before{content:"";position:absolute;inset:-20%;background:repeating-radial-gradient(ellipse at center,transparent 0 70px,#b6d58b0b 72px 74px);animation:introDrift 24s linear infinite;pointer-events:none}
+.intro-content{position:relative;z-index:1;max-width:850px}
+.intro-emblem{font-size:clamp(52px,10vw,100px);filter:drop-shadow(0 0 22px #a5d87855);margin-bottom:18px;animation:introPulse 2.5s ease-in-out infinite}
+.intro-title{font-size:clamp(28px,6vw,64px);font-weight:1000;letter-spacing:clamp(2px,.7vw,8px);line-height:1.12;color:#f3d58d;text-shadow:0 4px 0 #684c26,0 0 30px #e6bd6655;margin:0}
+.intro-banner{font-size:clamp(25px,5vw,48px);font-weight:1000;letter-spacing:clamp(3px,.8vw,9px);color:#e8f2d8;margin:22px 0 0;text-shadow:0 0 22px #a7d98a88}
+.intro-rule{width:min(300px,65vw);height:2px;margin:22px auto;background:linear-gradient(90deg,transparent,#d9c17b,transparent)}
+.intro-tagline{font-size:11px;letter-spacing:3px;color:#a9c3a5}
+.intro-play{margin-top:30px;padding:15px 38px;border:1px solid #f3d58d;border-radius:10px;background:linear-gradient(#a98649,#70532c);color:#fff5d8;font-size:14px;font-weight:950;letter-spacing:2px;cursor:pointer;box-shadow:0 8px 30px #0008,0 0 24px #eac56c22;transition:transform .18s,filter .18s}
+.intro-play:hover{transform:translateY(-3px);filter:brightness(1.15)}
+.intro-play[hidden]{display:none}
+@keyframes introPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.07);opacity:1}}
+@keyframes introDrift{to{transform:rotate(360deg)}}
+
 </style>
 </head>
 <body>
+
+<div class="intro-screen" id="introScreen">
+ <div class="intro-content">
+  <div class="intro-emblem" aria-hidden="true">🌳</div>
+  <h1 class="intro-title">GUARDIANS OF THE GROVE</h1>
+  <div class="intro-rule"></div>
+  <p class="intro-banner">FOR NARNIA!!</p>
+  <p class="intro-tagline">THE GROVE AWAITS ITS GUARDIANS</p>
+  <button class="intro-play" id="introPlay" hidden>PLAY GAME</button>
+ </div>
+</div>
 <header class="topbar">
  <div class="brand">GUARDIANS <span>OF THE GROVE</span><small class="version">V1.0 · THE GROVE CAMPAIGN</small></div>
  <div class="hud">
@@ -400,5 +426,18 @@ function draw(){
 function loop(ts){let dt=Math.min(.04,(ts-lastTime)/1000||0);lastTime=ts;update(dt);draw();requestAnimationFrame(loop);}
 unlockTowersByLevel();buildTowerGrid();initDecor();renderProfile();renderMapGrid();setDifficulty(difficulty);updateUI();requestAnimationFrame(loop);
 </script>
+
+<script>
+(function(){
+ const intro=document.getElementById("introScreen");
+ const play=document.getElementById("introPlay");
+ window.setTimeout(function(){play.hidden=false;},2000);
+ play.addEventListener("click",function(){
+  intro.style.display="none";
+  document.getElementById("campaignMenu").style.display="flex";
+ });
+})();
+</script>
+
 </body>
 </html>
